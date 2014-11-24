@@ -45,4 +45,21 @@ public class Card implements Comparable<Card> {
 	public Number getNum() {
 		return num;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Card card = (Card) o;
+
+		return num == card.num && suit == card.suit;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = num != null ? num.hashCode() : 0;
+		result = 31 * result + (suit != null ? suit.hashCode() : 0);
+		return result;
+	}
 }

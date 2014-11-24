@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Een deck met Cards
@@ -20,8 +21,8 @@ public class Deck {
 	 * harten en ruiten.
 	 */
 	public void fill() {
-		Suit[] suits = Suit.values();
-		Number[] numbers = Number.values();
+		final Suit[] suits = Suit.values();
+		final Number[] numbers = Number.values();
 		for (int i = 0; i < suits.length; i++) {
 			Suit suit = suits[i];
 			for (int j = 0; j < numbers.length; j++) {
@@ -72,11 +73,27 @@ public class Deck {
 	 * 
 	 */
 	public void shuffle() {
-
+		final Card[] shuffled = new Card[cardArray.length];
+		int[] unshuffled = new int[cardArray.length];
+		for (int i = 0; i < unshuffled.length; i++) {
+			unshuffled[i] = i;
+		}
+		final Random random = new Random();
+		for (int i = 0; i < cardArray.length; i++) {
+			int idx = random.nextInt(unshuffled.length);
+			shuffled[i] = cardArray[unshuffled[idx]];
+			if (unshuffled[idx] != unshuffled[unshuffled.length - 1]) {
+				for (int j = idx; j < unshuffled.length; j++) {
+					unshuffled[idx] = unshuffled[idx + 1];
+				}
+			}
+			unshuffled = Arrays.copyOf(unshuffled, unshuffled.length - 1);
+		}
+		cardArray = shuffled;
 	}
 
 	/**
-	 * Utillity method for swapping cards in given indices
+	 * Utility method for swapping cards in given indices
 	 * 
 	 * @param indexA
 	 * @param indexB
@@ -109,9 +126,21 @@ public class Deck {
 	 * @return
 	 */
 	public boolean isSorted(){
-		boolean sorted = true;
-		//...
-		return sorted;
+		final Suit[] suits = Suit.values();
+		final Number[] numbers = Number.values();
+		for (int i = 0; i < suits.length; i++) {
+			Suit suit = suits[i];
+			for (int j = 0; j < numbers.length; j++) {
+				Number number = numbers[j];
+				Card check = new Card(number, suit);
+				Card currentCard = cardArray[(j + (i * (numbers.length)))];
+				int resCompare = currentCard.compareTo(check);
+				if (resCompare != 0) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -123,8 +152,37 @@ public class Deck {
 	 * @return De index van de gevonden kaart
 	 */
 	public int binarySearch(Card card) {
-		int result = -1;
-		return result;
+		int idx = 0;
+		try {
+			while (!cardArray[idx].equals(card)) {
+				idx++;
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return -1;
+		}
+		return binarySearch(card, cardArray);
+	}
+
+	private int binarySearch(Card card, Card[] partialArray) {
+		int idx = 0;
+		int mid = partialArray.length / 2;
+		while (!partialArray[idx].equals(card)) {
+			idx++;
+		}
+
+		if (partialArray.length > 1) {
+			if (idx < mid) {
+				return binarySearch(card, Arrays.copyOfRange(partialArray, 0, mid));
+			} else if (idx > mid) {
+				return binarySearch(card, Arrays.copyOfRange(partialArray, mid, partialArray.length));
+			} else if (idx == mid) {
+				return 0;
+			}
+		}
+		if (idx == mid) {
+			return 0;
+		}
+		return -1;
 	}
 
 
