@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Een deck met Cards
  * 
@@ -18,6 +20,16 @@ public class Deck {
 	 * harten en ruiten.
 	 */
 	public void fill() {
+		Suit[] suits = Suit.values();
+		Number[] numbers = Number.values();
+		for (int i = 0; i < suits.length; i++) {
+			Suit suit = suits[i];
+			for (int j = 0; j < numbers.length; j++) {
+				Number number = numbers[j];
+				cardArray = Arrays.copyOf(cardArray, cardArray.length + 1);
+				cardArray[cardArray.length-1] = new Card(number, suit);
+			}
+		}
 	}
 
 	/**
@@ -31,6 +43,11 @@ public class Deck {
 	 *            Op positie
 	 */
 	public void insertAt(Card card, int index) {
+		cardArray = Arrays.copyOf(cardArray, cardArray.length + 1);
+		for (int i = cardArray.length - 1; i > index; i--) {
+			cardArray[i] = cardArray[i-1];
+		}
+		cardArray[index] = card;
 	}
 
 	/**
@@ -43,6 +60,10 @@ public class Deck {
 	 * @param index
 	 */
 	public void delete(int index) {
+		for (int i = index; i < cardArray.length - 1; i++) {
+			cardArray[i] = cardArray[i + 1];
+		}
+		cardArray = Arrays.copyOf(cardArray, cardArray.length - 1);
 	}
 
 	/**
@@ -78,7 +99,7 @@ public class Deck {
 
 	/**
 	 * Legt de kaarten op volgorde. We nemen aan dat een deck op volgorde ligt,
-	 * als de volgorde hetzelfde is als na {@link #fillDeck()}
+	 * als de volgorde hetzelfde is als na {@link #fill()}
 	 */
 	public void sort() {
 	}
@@ -112,13 +133,32 @@ public class Deck {
 	 */
 	@Override
 	public String toString() {
-		String str = "";
-
-		return str + "\n";
+		StringBuilder res = new StringBuilder();
+		for (int i = 0; i < cardArray.length; i++) {
+			Card card = cardArray[i];
+			res.append(card.toString() + '\n');
+		}
+		return res.toString() + '\n';
 	}
 	
 	public int compareTo(Deck d){
 		return 0;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Deck deck = (Deck) o;
+
+		if (!Arrays.equals(cardArray, deck.cardArray)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return cardArray != null ? Arrays.hashCode(cardArray) : 0;
+	}
 }
