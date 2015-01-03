@@ -110,8 +110,15 @@ public class Deck {
 	 * @return De index van de gevonden kaart
 	 */
 	public int sequentialSearch(Card card) {
-		int result = -1;
-		return result;
+		int idx = 0;
+		try {
+			while (!cardArray[idx].equals(card)) {
+				idx++;
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			idx = -1;
+		}
+		return idx;
 	}
 
 	/**
@@ -119,6 +126,7 @@ public class Deck {
 	 * als de volgorde hetzelfde is als na {@link #fill()}
 	 */
 	public void sort() {
+
 	}
 
 	/**
@@ -192,15 +200,25 @@ public class Deck {
 	@Override
 	public String toString() {
 		StringBuilder res = new StringBuilder();
-		for (int i = 0; i < cardArray.length; i++) {
-			Card card = cardArray[i];
-			res.append(card.toString() + '\n');
+		for (Card card : cardArray) {
+			res.append(card.toString()).append('\n');
 		}
 		return res.toString() + '\n';
 	}
 	
-	public int compareTo(Deck d){
-		return 0;
+	public int compareTo(Deck d) {
+		if (cardArray.length > d.cardArray.length) {
+			return 1;
+		} else if (cardArray.length < d.cardArray.length) {
+			return -1;
+		}
+
+		int total = 0;
+		for (int i = 0; i < cardArray.length; i++) {
+			Card card = cardArray[i];
+			total += card.compareTo(d.cardArray[i]);
+		}
+		return total;
 	}
 
 	@Override
@@ -210,9 +228,7 @@ public class Deck {
 
 		Deck deck = (Deck) o;
 
-		if (!Arrays.equals(cardArray, deck.cardArray)) return false;
-
-		return true;
+		return Arrays.equals(cardArray, deck.cardArray);
 	}
 
 	@Override

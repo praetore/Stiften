@@ -25,18 +25,32 @@ public class Card implements Comparable<Card> {
 	 * Vergelijk twee kaarten.
 	 */
 	public int compareTo(Card card) {
-		if (getIndex(this.num) > getIndex(card.getNum())) {
+		if (getNumberIndex(this.num) > getNumberIndex(card.getNum())) {
 			return 1;
-		} else if (getIndex(this.num) < getIndex(card.getNum())) {
+		} else if (getNumberIndex(this.num) < getNumberIndex(card.getNum())) {
 			return -1;
 		}
 		return 0;
 	}
 
-	private int getIndex(Number num) {
+	protected int getIndex(Card card) {
+		return getNumberIndex(num) + (getSuitIndex(suit) * (
+				Number.values().length * Suit.values().length));
+	}
+
+	private int getNumberIndex(Number num) {
 		Number[] values = Number.values();
 		int index = 0;
 		while (values[index] != num) {
+			index++;
+		}
+		return index;
+	}
+
+	private int getSuitIndex(Suit suit) {
+		Suit[] values = Suit.values();
+		int index = 0;
+		while (values[index] != suit) {
 			index++;
 		}
 		return index;
